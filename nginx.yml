@@ -1,0 +1,38 @@
+#kubectl run n1 --image=nginx --port=80 -n myns
+#kubectl expose pod n1 --port=80 --target-port=80 --name=n1svc --type=NodePort
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: myns
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: n1
+  labels:
+    env: dev
+    app: n1
+  namespace: myns
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: n1svc
+  labels:
+    env: dev
+    app: n1svc
+  namespace: myns
+spec:
+  type: NodePort
+  selector:
+    app: n1
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
